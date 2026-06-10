@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
-
-    public event Action JumpEvent;
-    public event Action DodgeEvent;
+    public static event Action AttackEvent;
+    public static event Action JumpEvent;
+    public static event Action DodgeEvent;
 
 
     [SerializeField] private PlayerMovement playerMovement;
@@ -33,5 +33,11 @@ public class PlayerInput : MonoBehaviour
     {
         if (ctx.performed)
             DodgeEvent?.Invoke();
+    }
+
+    public void OnAttack(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+            AttackEvent?.Invoke();
     }
 }

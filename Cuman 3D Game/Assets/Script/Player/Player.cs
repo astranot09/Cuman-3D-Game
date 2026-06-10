@@ -1,16 +1,20 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Entity
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Player Attack Settings")]
+    [SerializeField] private float damageAmount = 10f;
 
-    // Update is called once per frame
-    void Update()
+    [Header("Player Weapon Settings")]
+    [SerializeField] private WeaponDamage playerWeapon;
+    protected override void Start()
     {
-        
+        base.Start();
+        playerWeapon.SetWeaponDamage(damageAmount);
+    }
+    protected override void TakingDamageLogic()
+    {
+        base.TakingDamageLogic();
+        SoundManager.instance.PlaySFX(SoundManager.instance.playerHurt);
     }
 }
