@@ -26,5 +26,16 @@ public class EnemyScript : Entity
         {
             other.GetComponent<IDamageable>().TakeDamage(damageAmount);
         }
+        
     }
+
+
+    protected override void Die()
+    {
+        Debug.Log("Confetti");
+        currentHealth = maxHealth;
+        healthBar.HealthBarInitiation();
+    }
+
+
 }

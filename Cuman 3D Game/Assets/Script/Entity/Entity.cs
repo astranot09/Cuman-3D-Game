@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float currentHealth;
+    [SerializeField] protected float maxHealth = 100f;
+    [SerializeField] protected float currentHealth;
 
     // Menghubungkan variabel skrip ke Properti milik Interface
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
 
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] protected HealthBar healthBar;
 
     [Header("Floating Text")]
     [SerializeField] private GameObject damageTextPrefab;

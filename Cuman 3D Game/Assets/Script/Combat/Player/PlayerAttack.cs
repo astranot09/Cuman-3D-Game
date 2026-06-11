@@ -11,11 +11,11 @@ public class PlayerAttack : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerInput.AttackEvent += PlayAttack;
+        PlayerInputHandler.AttackEvent += PlayAttack;
     }
     private void OnDisable()
     {
-        PlayerInput.AttackEvent -= PlayAttack;
+        PlayerInputHandler.AttackEvent -= PlayAttack;
     }
     public void PlayAttack()
     {

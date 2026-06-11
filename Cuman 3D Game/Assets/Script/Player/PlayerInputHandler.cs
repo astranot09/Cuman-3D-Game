@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInputHandler : MonoBehaviour
 {
     public static event Action AttackEvent;
     public static event Action JumpEvent;
     public static event Action DodgeEvent;
 
-
+    [SerializeField] private PlayerInput unityPlayerInput;
     [SerializeField] private PlayerMovement playerMovement;
 
     public Vector2 movementValue { get; private set; }
@@ -39,5 +39,21 @@ public class PlayerInput : MonoBehaviour
     {
         if (ctx.performed)
             AttackEvent?.Invoke();
+    }
+
+    public void OnUI(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            unityPlayerInput.actions["Player/Attack"].Disable();
+            Cursor.lockState = CursorLockMode.None;
+        }
+            
+        else if (ctx.canceled)
+        {
+            unityPlayerInput.actions["Player/Attack"].Enable();
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+            
     }
 }

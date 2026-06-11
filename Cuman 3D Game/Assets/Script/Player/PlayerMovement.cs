@@ -26,13 +26,13 @@ public class PlayerMovement : MonoBehaviour
     // BERLANGGANAN EVENT (Saat skrip aktif)
     private void OnEnable()
     {
-        PlayerInput.JumpEvent += HandleJump; // Daftarkan fungsi HandleJump ke Event
+        PlayerInputHandler.JumpEvent += HandleJump; // Daftarkan fungsi HandleJump ke Event
     }
 
     // MENCABUT EVENT (Saat skrip mati/hancur)
     private void OnDisable()
     {
-        PlayerInput.JumpEvent -= HandleJump;
+        PlayerInputHandler.JumpEvent -= HandleJump;
     }
 
     private void Start()

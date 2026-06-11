@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerStateMachine : StateMachine
 {
-    [field : SerializeField] public PlayerInput PlayerInput {  get; private set; }
+    [field : SerializeField] public PlayerInputHandler PlayerInput {  get; private set; }
 
     void Start()
     {
