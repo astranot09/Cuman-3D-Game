@@ -12,17 +12,18 @@ public class PlayerTestState : PlayerBaseState
 
     public override void Enter()
     {
-        
-    }
-
-    public override void Exit()
-    {
-        
+        Debug.Log("Enter");
     }
 
     public override void Tick(float deltaTime)
     {
+        Debug.Log("Tick");
         //Debug.Log(stateMachine.PlayerInput.movementValue);
+    }
+
+    public override void Exit()
+    {
+        Debug.Log("Exit");
     }
 
     private void OnJump()

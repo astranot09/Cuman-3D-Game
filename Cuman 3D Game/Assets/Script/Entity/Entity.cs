@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.VFX;
 public class Entity : MonoBehaviour, IDamageable
 {
     [SerializeField] protected float maxHealth = 100f;
@@ -14,6 +14,10 @@ public class Entity : MonoBehaviour, IDamageable
     [Header("Floating Text")]
     [SerializeField] private GameObject damageTextPrefab;
 
+    [Header("VFX")]
+    [SerializeField] private VisualEffect vfx;
+
+
     protected virtual void Start()
     {
         Debug.Log("Test A");
@@ -24,6 +28,13 @@ public class Entity : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
+
+        if (IsDamageBlocked())
+        {
+            Debug.Log($"{gameObject.name} kebal! Damage diblokir.");
+            return;
+        }
+
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -31,6 +42,7 @@ public class Entity : MonoBehaviour, IDamageable
 
         Debug.Log($"{gameObject.name} terkena damage! Sisa nyawa: {currentHealth}");
         healthBar?.UpdateUI();
+        vfx.SendEvent("OnPlay");
 
         TakingDamageLogic();
 
@@ -89,5 +101,9 @@ public class Entity : MonoBehaviour, IDamageable
     protected virtual void TakingDamageLogic()
     {
 
+    }
+    protected virtual bool IsDamageBlocked()
+    {
+        return false;
     }
 }

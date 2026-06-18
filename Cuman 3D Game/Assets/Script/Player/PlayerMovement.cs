@@ -59,7 +59,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!onMovement) return;  
+        if (!onMovement)
+        {
+            moveDir = Vector3.zero;
+        }  
 
         // 1. Hitung total pergerakan (Jalan + Gravitasi dari ForceReceiver)
         Vector3 motion = (moveDir * moveSpeed) + forceReceiver.Movement;

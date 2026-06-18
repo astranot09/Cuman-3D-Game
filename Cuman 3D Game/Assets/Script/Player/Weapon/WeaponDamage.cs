@@ -1,10 +1,10 @@
 using UnityEngine;
-
 public class WeaponDamage : MonoBehaviour
 {
 
     [SerializeField] private float weaponDamage = 10f;
     [SerializeField] private StatManager statManager;
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) return;

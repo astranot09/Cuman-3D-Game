@@ -6,13 +6,6 @@ public class PlayerStateMachine : StateMachine
 
     void Start()
     {
-        // 1. Buat objek State baru, sekalian oper "this" (dirinya sendiri) lewat constructor
-        PlayerTestState stateAwal = new PlayerTestState(this);
-
-        // 2. Masukkan state tersebut ke dalam sistem StateMachine
-        SwitchState(stateAwal);
-
-        // Catatan: Biasanya para programmer menyingkatnya langsung menjadi:
-        // SwitchState(new PlayerTestState(this));
+        SwitchState(new PlayerTestState(this));
     }
 }
