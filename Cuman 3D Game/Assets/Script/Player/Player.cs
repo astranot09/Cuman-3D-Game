@@ -33,4 +33,9 @@ public class Player : Entity
         // Jika shield tidak aktif, jalankan sfx terluka dan kembalikan false (darah tetap berkurang)
         return false;
     }
+
+    protected override void Die()
+    {
+        SceneController.instance.StartGame();
+    }
 }

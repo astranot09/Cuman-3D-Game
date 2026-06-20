@@ -106,4 +106,5 @@ public class Entity : MonoBehaviour, IDamageable
     {
         return false;
     }
+
 }

@@ -24,10 +24,19 @@ public class PlayerSkill : MonoBehaviour
     [Header("Forced")]
     [SerializeField] private ForceReceiver forceReceiver;
 
+
+    [Header("UI")]
+    [SerializeField] private SkillUI skillUI;
+
     private void Start()
     {
         // Initialize dashes so the player starts with maximum charges
         currDash = maxDash;
+        if (skillUI != null)
+        {
+            skillUI.UpdateShieldUI(1f); // 1 = penuh/siap
+            skillUI.UpdateDashUI(1f, currDash);
+        }
     }
 
 
@@ -43,33 +52,54 @@ public class PlayerSkill : MonoBehaviour
 
     private IEnumerator ShieldRoutine()
     {
-        // 1. Activate Shield
+        // 1. Aktifkan Shield
         shieldActivate = true;
         if (shieldEffect != null) shieldEffect.Play();
-        Debug.Log("Shield Activated!");
 
-        // 2. Wait for duration to end
+        // Selama durasi aktif, UI di-set ke 0 (menandakan shield sedang dipakai)
+        if (skillUI != null) skillUI.UpdateShieldUI(0f);
+
         yield return new WaitForSeconds(shieldDuration);
 
-        // 3. Deactivate Shield
+        // 2. Matikan Shield
         shieldActivate = false;
         if (shieldEffect != null) shieldEffect.Stop();
-        Debug.Log("Shield Expired. Cooldown started...");
 
-        // 4. Handle Cooldown
+        // 3. Masuk Cooldown (Transisi UI Mulus dari 0% ke 100%)
         isShieldOnCooldown = true;
-        yield return new WaitForSeconds(shieldCooldown);
+        float cooldownTimer = 0f;
+
+        while (cooldownTimer < shieldCooldown)
+        {
+            cooldownTimer += Time.deltaTime;
+
+            if (skillUI != null)
+            {
+                // Menghitung persentase fillAmount (0.0 sampai 1.0)
+                float fillRatio = cooldownTimer / shieldCooldown;
+                skillUI.UpdateShieldUI(fillRatio);
+            }
+            yield return null; // Tunggu ke frame berikutnya (smooth)
+        }
+
+        // Pastikan penuh sempurna di akhir
+        if (skillUI != null) skillUI.UpdateShieldUI(1f);
         isShieldOnCooldown = false;
-        Debug.Log("Shield Ready again!");
     }
+
+
     public void OnDash(InputAction.CallbackContext ctx)
     {
-        Debug.Log("Dash");
         if (currDash > 0 && ctx.performed)
         {
             currDash--;
+
+            // Update UI jumlah dash langsung saat digunakan
+            if (skillUI != null) skillUI.UpdateDashUI(0f, currDash);
+
             forceReceiver.AddForce(transform.forward * dashForced);
-            if(dashRecoveryCoroutine == null)
+
+            if (dashRecoveryCoroutine == null)
             {
                 dashRecoveryCoroutine = StartCoroutine(DashRecoveryCountDown());
             }
@@ -79,15 +109,30 @@ public class PlayerSkill : MonoBehaviour
 
     private IEnumerator DashRecoveryCountDown()
     {
-        // Keep recovering charges one by one until maxDash is reached
         while (currDash < maxDash)
         {
-            yield return new WaitForSeconds(dashCooldown);
+            float recoveryTimer = 0f;
+
+            // Transisi UI pengisian cooldown dash per charges secara mulus
+            while (recoveryTimer < dashCooldown)
+            {
+                recoveryTimer += Time.deltaTime;
+
+                if (skillUI != null)
+                {
+                    float fillRatio = recoveryTimer / dashCooldown;
+                    skillUI.UpdateDashUI(fillRatio, currDash);
+                }
+                yield return null;
+            }
+
             currDash++;
             Debug.Log($"Dash recovered! Current dashes: {currDash}");
+
+            // Update UI lagi setelah angka dash resmi bertambah
+            if (skillUI != null) skillUI.UpdateDashUI(1f, currDash);
         }
 
-        // Set back to null when done so it can be restarted later
         dashRecoveryCoroutine = null;
     }
 }
