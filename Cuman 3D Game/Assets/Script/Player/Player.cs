@@ -11,10 +11,15 @@ public class Player : Entity
 
     [SerializeField] private PlayerSkill skill;
 
+
+
+    [SerializeField] private GameObject spawnVFX;
+
     protected override void Start()
     {
         base.Start();
         playerWeapon.SetWeaponDamage(damageAmount);
+        spawnVFX.SetActive(true);
     }
     protected override void TakingDamageLogic()
     {

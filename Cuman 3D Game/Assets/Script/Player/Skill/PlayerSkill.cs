@@ -7,6 +7,7 @@ public class PlayerSkill : MonoBehaviour
 {
     [Header("Shield SKill")]
     [SerializeField] private VisualEffect shieldEffect;
+    [SerializeField] private GameObject shieldPrefab;
     [SerializeField] private bool shieldActivate;
     [SerializeField] private float shieldDuration;
     [SerializeField] private float shieldCooldown;
@@ -55,7 +56,7 @@ public class PlayerSkill : MonoBehaviour
         // 1. Aktifkan Shield
         shieldActivate = true;
         if (shieldEffect != null) shieldEffect.Play();
-
+        shieldPrefab.SetActive(true);
         // Selama durasi aktif, UI di-set ke 0 (menandakan shield sedang dipakai)
         if (skillUI != null) skillUI.UpdateShieldUI(0f);
 
@@ -64,6 +65,7 @@ public class PlayerSkill : MonoBehaviour
         // 2. Matikan Shield
         shieldActivate = false;
         if (shieldEffect != null) shieldEffect.Stop();
+        shieldPrefab.SetActive(false);
 
         // 3. Masuk Cooldown (Transisi UI Mulus dari 0% ke 100%)
         isShieldOnCooldown = true;
