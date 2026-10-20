@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,13 +25,16 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Bool")]
     [SerializeField] private bool onMovement = true;
 
-    // BERLANGGANAN EVENT (Saat skrip aktif)
+    [Header("SpeedEffect")]
+    [SerializeField] private Volume postProcessVolume;
+    private ChromaticAberration chromaticAberration;
+    [SerializeField] private float speedEffectTrigger = 10f;
+
     private void OnEnable()
     {
         PlayerInputHandler.JumpEvent += HandleJump; // Daftarkan fungsi HandleJump ke Event
     }
 
-    // MENCABUT EVENT (Saat skrip mati/hancur)
     private void OnDisable()
     {
         PlayerInputHandler.JumpEvent -= HandleJump;
@@ -40,6 +45,12 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         forceReceiver = GetComponent<ForceReceiver>(); // Ambil komponen ForceReceiver
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (postProcessVolume != null && postProcessVolume.profile != null)
+        {
+            postProcessVolume.profile.TryGet(out chromaticAberration);
+        }
+
     }
 
     public void SetMoveDirection(Vector2 input)
@@ -79,6 +90,15 @@ public class PlayerMovement : MonoBehaviour
         {
             Quaternion toRotation = Quaternion.LookRotation(moveDir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+
+        if (characterController.velocity.magnitude > speedEffectTrigger)
+        {
+            chromaticAberration.intensity.value = 1f;
+        }
+        else
+        {
+            chromaticAberration.intensity.value = 0f;
         }
     }
 

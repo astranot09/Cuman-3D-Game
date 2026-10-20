@@ -4,8 +4,6 @@ public class Entity : MonoBehaviour, IDamageable
 {
     [SerializeField] protected float maxHealth = 100f;
     [SerializeField] protected float currentHealth;
-
-    // Menghubungkan variabel skrip ke Properti milik Interface
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
 
@@ -15,7 +13,7 @@ public class Entity : MonoBehaviour, IDamageable
     [SerializeField] private GameObject damageTextPrefab;
 
     [Header("VFX")]
-    [SerializeField] private VisualEffect vfx;
+    [SerializeField] private ParticleSystem damageParticle;
 
 
     protected virtual void Start()
@@ -42,7 +40,8 @@ public class Entity : MonoBehaviour, IDamageable
 
         Debug.Log($"{gameObject.name} terkena damage! Sisa nyawa: {currentHealth}");
         healthBar?.UpdateUI();
-        vfx.SendEvent("OnPlay");
+
+        damageParticle.Play(true);
 
         TakingDamageLogic();
 
@@ -81,8 +80,8 @@ public class Entity : MonoBehaviour, IDamageable
     private Vector3 RandomLocation(Vector3 baseLocation)
     {
         // Menentukan seberapa jauh teks boleh melenceng dari posisi dasar
-        float xRandomRange = 1f;
-        float yRandomRange = 0.3f;
+        float xRandomRange = 0.1f;
+        float yRandomRange = 0.1f;
 
         // Berikan nilai acak minus atau plus dari posisi dasar
         float randomX = Random.Range(-xRandomRange, xRandomRange);

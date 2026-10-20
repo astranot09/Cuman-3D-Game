@@ -10,6 +10,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     [SerializeField] private PlayerInput unityPlayerInput;
     [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private PlayerInteract playerInteract;
+    [SerializeField] private PlayerSkill playerSkill;
+    [SerializeField] private DialogueUI dialogueUI;
 
     public Vector2 movementValue { get; private set; }
 
@@ -41,6 +44,29 @@ public class PlayerInputHandler : MonoBehaviour
             AttackEvent?.Invoke();
     }
 
+    public void OnInteract(InputAction.CallbackContext ctx)
+    {
+        if (ctx.canceled)
+            playerInteract.PlayerIsInteract();
+    }
+
+    public void OnDash(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+            playerSkill.OnDash();
+    }
+    public void OnShield(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+            playerSkill.OnShield();
+    }
+
+    public void OnUltimate(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+            playerSkill.OnUltimate();
+    }
+
     public void OnUI(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
@@ -55,5 +81,19 @@ public class PlayerInputHandler : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
             
+    }
+
+    public void OnDialogueClick(InputAction.CallbackContext ctx)
+    {
+        if (ctx.canceled)
+            dialogueUI.OnDialogueClick();
+    }
+    public void ChangeModeToDialogue()
+    {
+        unityPlayerInput.SwitchCurrentActionMap("Dialogue");
+    }
+    public void ExitDialogueMode()
+    {
+        unityPlayerInput.SwitchCurrentActionMap("Player");
     }
 }

@@ -6,8 +6,7 @@ using UnityEngine.VFX;
 public class PlayerSkill : MonoBehaviour
 {
     [Header("Shield SKill")]
-    [SerializeField] private VisualEffect shieldEffect;
-    [SerializeField] private GameObject shieldPrefab;
+    [SerializeField] private ParticleSystem shieldEffect;
     [SerializeField] private bool shieldActivate;
     [SerializeField] private float shieldDuration;
     [SerializeField] private float shieldCooldown;
@@ -21,6 +20,12 @@ public class PlayerSkill : MonoBehaviour
     [SerializeField] private float dashCooldown;
     [SerializeField] private Coroutine dashRecoveryCoroutine;
 
+    [Header("Ultimate SKill")]
+    [SerializeField] private float durationUltimate = 5f;
+    [SerializeField] private float ultimateCooldown = 15f;
+    [SerializeField] private Coroutine ultimateRecoveryCoroutine;
+    [SerializeField] private GameObject ultimatePrefab;
+    private bool onUltimate;
 
     [Header("Forced")]
     [SerializeField] private ForceReceiver forceReceiver;
@@ -31,7 +36,6 @@ public class PlayerSkill : MonoBehaviour
 
     private void Start()
     {
-        // Initialize dashes so the player starts with maximum charges
         currDash = maxDash;
         if (skillUI != null)
         {
@@ -41,11 +45,10 @@ public class PlayerSkill : MonoBehaviour
     }
 
 
-    public void OnShield(InputAction.CallbackContext ctx)
+    public void OnShield()
     {
         Debug.Log("Shield");
-        // Only trigger once on button press, if shield isn't active, and isn't on cooldown
-        if (ctx.performed && !shieldActivate && !isShieldOnCooldown)
+        if (!shieldActivate && !isShieldOnCooldown)
         {
             StartCoroutine(ShieldRoutine());
         }
@@ -53,21 +56,19 @@ public class PlayerSkill : MonoBehaviour
 
     private IEnumerator ShieldRoutine()
     {
-        // 1. Aktifkan Shield
         shieldActivate = true;
-        if (shieldEffect != null) shieldEffect.Play();
-        shieldPrefab.SetActive(true);
-        // Selama durasi aktif, UI di-set ke 0 (menandakan shield sedang dipakai)
+
+        if (shieldEffect != null)
+            shieldEffect.Play(true);
+
         if (skillUI != null) skillUI.UpdateShieldUI(0f);
 
         yield return new WaitForSeconds(shieldDuration);
 
-        // 2. Matikan Shield
         shieldActivate = false;
-        if (shieldEffect != null) shieldEffect.Stop();
-        shieldPrefab.SetActive(false);
+        if (shieldEffect != null)
+            shieldEffect.Stop(true);
 
-        // 3. Masuk Cooldown (Transisi UI Mulus dari 0% ke 100%)
         isShieldOnCooldown = true;
         float cooldownTimer = 0f;
 
@@ -77,22 +78,20 @@ public class PlayerSkill : MonoBehaviour
 
             if (skillUI != null)
             {
-                // Menghitung persentase fillAmount (0.0 sampai 1.0)
                 float fillRatio = cooldownTimer / shieldCooldown;
                 skillUI.UpdateShieldUI(fillRatio);
             }
-            yield return null; // Tunggu ke frame berikutnya (smooth)
+            yield return null;
         }
 
-        // Pastikan penuh sempurna di akhir
         if (skillUI != null) skillUI.UpdateShieldUI(1f);
         isShieldOnCooldown = false;
     }
 
 
-    public void OnDash(InputAction.CallbackContext ctx)
+    public void OnDash()
     {
-        if (currDash > 0 && ctx.performed)
+        if (currDash > 0)
         {
             currDash--;
 
@@ -107,7 +106,6 @@ public class PlayerSkill : MonoBehaviour
             }
         }
     }
-
 
     private IEnumerator DashRecoveryCountDown()
     {
@@ -136,5 +134,26 @@ public class PlayerSkill : MonoBehaviour
         }
 
         dashRecoveryCoroutine = null;
+    }
+
+    public void OnUltimate()
+    {
+        if (!onUltimate && ultimateRecoveryCoroutine == null)
+        {
+            ultimateRecoveryCoroutine = StartCoroutine(UltimateRecovery());
+        }
+    }
+
+    IEnumerator UltimateRecovery()
+    {
+        onUltimate = true;
+        Instantiate(ultimatePrefab,transform.position, Quaternion.identity);
+
+        yield return new WaitForSeconds(durationUltimate);
+
+        onUltimate = false;
+
+        yield return new WaitForSeconds(ultimateCooldown);
+        ultimateRecoveryCoroutine = null;
     }
 }
